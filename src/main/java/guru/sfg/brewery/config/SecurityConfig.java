@@ -11,7 +11,10 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
-                .authorizeRequests(authorize  -> authorize .antMatchers("/", "/webjars/**", "/login", "/resources/**").permitAll()) //this needs to show static resources on /
+                .authorizeRequests(authorize -> authorize
+                        .antMatchers("/", "/webjars/**", "/login", "/resources/**").permitAll() //this needs to show static resources on /
+                        .antMatchers("/beers/find", "/beers*").permitAll()
+                )
                 .authorizeRequests()
                 .anyRequest().authenticated()
                 .and()
