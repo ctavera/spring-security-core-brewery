@@ -6,8 +6,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.LdapShaPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.password.StandardPasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -16,7 +16,8 @@ public class SecurityConfig {
 
     @Bean
     PasswordEncoder passwordEncoder(){ // override the default implementation of password encoder, {noop} is not needed
-        return new LdapShaPasswordEncoder();
+        return new StandardPasswordEncoder(); //only use this encoder for legacy
+//        return new LdapShaPasswordEncoder();
 //        return NoOpPasswordEncoder.getInstance(); //only use this encoder for legacy
     }
 
@@ -49,7 +50,8 @@ public class SecurityConfig {
 
         UserDetails user = User.builder()
                 .username("user")
-                .password("{SSHA}EdMjVPV27Ut88qU5td1m1YDAXBl2GBE8infd8Q==") //LDAP
+                .password("5cdbdd61f5fe9faf0893cad669643946e44c5f63482d4a46ad7f9d4ebc5395fd22035927fd8fdb22") //SHA-256
+//                .password("{SSHA}EdMjVPV27Ut88qU5td1m1YDAXBl2GBE8infd8Q==") //LDAP
 //                .password("password")
 //                .password("{noop}password") //{noop} no op password encoder
                 .roles("USER")
