@@ -6,7 +6,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
@@ -16,10 +16,11 @@ public class SecurityConfig {
 
     @Bean
     PasswordEncoder passwordEncoder(){ // override the default implementation of password encoder, {noop} is not needed
-        return new BCryptPasswordEncoder(); //Spring Security default
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+//        return new BCryptPasswordEncoder(); //Spring Security default
 //        return new StandardPasswordEncoder(); //only use this encoder for legacy
 //        return new LdapShaPasswordEncoder();
-//        return NoOpPasswordEncoder.getInstance(); //only use this encoder for legacy
+//        return <NoOpPasswordEncoder.getInstance()>; //only use this encoder for legacy
     }
 
     @Bean
@@ -42,26 +43,30 @@ public class SecurityConfig {
 
     @Bean
     public InMemoryUserDetailsManager userDetailsService() { //replace the AuthenticationManagerBuilder
-        UserDetails admin = User.withDefaultPasswordEncoder() //doc: Using this method is not considered safe for production, but is acceptable for demos and getting started.
+
+        UserDetails admin = User.builder()
                 .username("spring")
-                .password("{SSHA}EdMjVPV27Ut88qU5td1m1YDAXBl2GBE8infd8Q==") //LDAP
+                .password("{bcrypt}$2a$10$XJcJQXTRqzIdiehxRZI1X.OWg7bHIRu1Wal4JpDD7MvfMs/yfWpky") //Bcrypt
+//                .password("{SSHA}EdMjVPV27Ut88qU5td1m1YDAXBl2GBE8infd8Q==") //LDAP
 //                .password("kahlua")
                 .roles("ADMIN")
                 .build();
 
         UserDetails user = User.builder()
                 .username("user")
-                .password("$2a$10$Seg8Cq7bEHFD2HqY4S1JAOqIV64PtDS4DAPcJ9ph8IEhe2pZIa80C") //Bcrypt
+                .password("{sha256}5cdbdd61f5fe9faf0893cad669643946e44c5f63482d4a46ad7f9d4ebc5395fd22035927fd8fdb22") //SHA-256 with PasswordEncoderFactories
+//                .password("$2a$10$Seg8Cq7bEHFD2HqY4S1JAOqIV64PtDS4DAPcJ9ph8IEhe2pZIa80C") //Bcrypt
 //                .password("5cdbdd61f5fe9faf0893cad669643946e44c5f63482d4a46ad7f9d4ebc5395fd22035927fd8fdb22") //SHA-256
 //                .password("{SSHA}EdMjVPV27Ut88qU5td1m1YDAXBl2GBE8infd8Q==") //LDAP
-//                .password("password")
+//                .password("password") //using NoOpPasswordEncoder
 //                .password("{noop}password") //{noop} no op password encoder
                 .roles("USER")
                 .build();
 
         UserDetails customer = User.builder()
                 .username("scott")
-                .password("tiger")
+                .password("{ldap}{SSHA}/jzR6gR/Y+9cHI1R/kc+QiWnl9loefmy4uRBUw==") //LDAP with PasswordEncoderFactories
+//                .password("tiger") //using NoOpPasswordEncoder
                 .roles("CUSTOMER")
                 .build();
 
