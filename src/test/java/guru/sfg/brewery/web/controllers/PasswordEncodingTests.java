@@ -15,6 +15,14 @@ public class PasswordEncodingTests {
     static final String PASSWORD = "password";
 
     @Test
+    void testBcrypt15() { //Custom Encoder
+
+        PasswordEncoder bcrypt = new BCryptPasswordEncoder(15); //default 10, higher, the longer it takes
+
+        System.out.println(bcrypt.encode("tiger"));
+    }
+
+    @Test
     void testBcrypt() { //default implementation of Spring Security
 
         PasswordEncoder bcrypt = new BCryptPasswordEncoder(); //default 10, higher, the longer it takes

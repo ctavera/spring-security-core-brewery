@@ -66,7 +66,8 @@ public class SecurityConfig {
 
         UserDetails customer = User.builder()
                 .username("scott")
-                .password("{ldap}{SSHA}/jzR6gR/Y+9cHI1R/kc+QiWnl9loefmy4uRBUw==") //LDAP with PasswordEncoderFactories
+                .password("{bcrypt15}$2a$15$kMR8TNjCDu9e/hD90AAEnuBHEDWql.2P/CvuPu7dZDFyDRaK6eJtO") //Custom Encoder bcrypt15
+//                .password("{ldap}{SSHA}/jzR6gR/Y+9cHI1R/kc+QiWnl9loefmy4uRBUw==") //LDAP with PasswordEncoderFactories
 //                .password("tiger") //using NoOpPasswordEncoder
                 .roles("CUSTOMER")
                 .build();
