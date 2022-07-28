@@ -6,7 +6,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.password.LdapShaPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
@@ -16,7 +16,8 @@ public class SecurityConfig {
 
     @Bean
     PasswordEncoder passwordEncoder(){ // override the default implementation of password encoder, {noop} is not needed
-        return NoOpPasswordEncoder.getInstance(); //only use this encoder for legacy
+        return new LdapShaPasswordEncoder();
+//        return NoOpPasswordEncoder.getInstance(); //only use this encoder for legacy
     }
 
     @Bean
@@ -41,13 +42,16 @@ public class SecurityConfig {
     public InMemoryUserDetailsManager userDetailsService() { //replace the AuthenticationManagerBuilder
         UserDetails admin = User.withDefaultPasswordEncoder() //doc: Using this method is not considered safe for production, but is acceptable for demos and getting started.
                 .username("spring")
-                .password("kahlua")
+                .password("{SSHA}EdMjVPV27Ut88qU5td1m1YDAXBl2GBE8infd8Q==") //LDAP
+//                .password("kahlua")
                 .roles("ADMIN")
                 .build();
 
         UserDetails user = User.builder()
                 .username("user")
-                .password("password") //{noop} no op password encoder
+                .password("{SSHA}EdMjVPV27Ut88qU5td1m1YDAXBl2GBE8infd8Q==") //LDAP
+//                .password("password")
+//                .password("{noop}password") //{noop} no op password encoder
                 .roles("USER")
                 .build();
 
