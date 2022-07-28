@@ -6,11 +6,18 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 @EnableWebSecurity
 public class SecurityConfig {
+
+    @Bean
+    PasswordEncoder passwordEncoder(){ // override the default implementation of password encoder, {noop} is not needed
+        return NoOpPasswordEncoder.getInstance(); //only use this encoder for legacy
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -40,13 +47,13 @@ public class SecurityConfig {
 
         UserDetails user = User.builder()
                 .username("user")
-                .password("{noop}password") //{noop} no op password encoder
+                .password("password") //{noop} no op password encoder
                 .roles("USER")
                 .build();
 
         UserDetails customer = User.builder()
                 .username("scott")
-                .password("{noop}tiger")
+                .password("tiger")
                 .roles("CUSTOMER")
                 .build();
 
