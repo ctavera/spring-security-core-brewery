@@ -1,12 +1,12 @@
 package guru.sfg.brewery.config;
 
+import guru.sfg.brewery.security.CustomPasswordEncoderFactories;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
@@ -16,7 +16,8 @@ public class SecurityConfig {
 
     @Bean
     PasswordEncoder passwordEncoder(){ // override the default implementation of password encoder, {noop} is not needed
-        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+        return CustomPasswordEncoderFactories.createDelegatingPasswordEncoder(); //Custom Delegating Password Encoder
+//        return PasswordEncoderFactories.createDelegatingPasswordEncoder(); //Delegating Password Encoder
 //        return new BCryptPasswordEncoder(); //Spring Security default
 //        return new StandardPasswordEncoder(); //only use this encoder for legacy
 //        return new LdapShaPasswordEncoder();
