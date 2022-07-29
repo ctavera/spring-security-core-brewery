@@ -47,7 +47,8 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, AuthenticationConfiguration authenticationConfiguration) throws Exception {
 
         httpSecurity.addFilterBefore(restHeaderAuthFilter(authenticationConfiguration.getAuthenticationManager()),
-                UsernamePasswordAuthenticationFilter.class);
+                        UsernamePasswordAuthenticationFilter.class)
+                .csrf().disable();
 
         httpSecurity
                 .authorizeRequests(authorize -> authorize
