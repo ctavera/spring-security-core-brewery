@@ -2,6 +2,7 @@ package guru.sfg.brewery.config;
 
 import guru.sfg.brewery.security.CustomPasswordEncoderFactories;
 import guru.sfg.brewery.security.RestHeaderAuthFilter;
+import guru.sfg.brewery.security.RestUrlParamsAuthFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -28,6 +29,13 @@ public class SecurityConfig {
         return filter;
     }
 
+    public RestUrlParamsAuthFilter restParamsAuthFilter(AuthenticationManager authenticationManager) {
+        RestUrlParamsAuthFilter filter = new RestUrlParamsAuthFilter(new AntPathRequestMatcher("/api/**"));
+        filter.setAuthenticationManager(authenticationManager);
+
+        return filter;
+    }
+
 //    @Bean //If we need to expose the AuthenticationManager
 //    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
 //        return authenticationConfiguration.getAuthenticationManager();
@@ -47,6 +55,8 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, AuthenticationConfiguration authenticationConfiguration) throws Exception {
 
         httpSecurity.addFilterBefore(restHeaderAuthFilter(authenticationConfiguration.getAuthenticationManager()),
+                        UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(restParamsAuthFilter(authenticationConfiguration.getAuthenticationManager()),
                         UsernamePasswordAuthenticationFilter.class)
                 .csrf().disable();
 

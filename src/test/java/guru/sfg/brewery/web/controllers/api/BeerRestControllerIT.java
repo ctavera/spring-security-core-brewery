@@ -15,6 +15,24 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class BeerRestControllerIT extends BaseIT {
 
     @Test
+    void deleteBeerUrlParams() throws Exception {
+        //Authentication Filter Use Case: legacy aplication who send headers with Api Key and Secret, not recommended
+        mockMvc.perform(delete("/api/v1/beer/cfca9075-1cc5-4532-84ea-739544af7144")
+                        .param("apiKey", "spring")
+                        .param("apiSecret", "kahlua"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void deleteBeerBadCredsUrlParams() throws Exception {
+        //Authentication Filter Use Case: legacy aplication who send headers with Api Key and Secret, not recommended
+        mockMvc.perform(delete("/api/v1/beer/cfca9075-1cc5-4532-84ea-739544af7144")
+                        .param("apiKey", "spring")
+                        .param("apiSecret", "kahluaXXXX"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
     void deleteBeerBadCreds() throws Exception {
         //Authentication Filter Use Case: legacy aplication who send headers with Api Key and Secret, not recommended
         mockMvc.perform(delete("/api/v1/beer/cfca9075-1cc5-4532-84ea-739544af7144")
