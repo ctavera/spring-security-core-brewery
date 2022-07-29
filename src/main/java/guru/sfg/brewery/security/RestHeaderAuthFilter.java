@@ -1,6 +1,7 @@
 package guru.sfg.brewery.security;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -50,6 +51,19 @@ public class RestHeaderAuthFilter extends AbstractAuthenticationProcessingFilter
             }
 
         }
+    }
+
+    @Override //it works without this method, only for testing the customized process
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
+        SecurityContextHolder.clearContext();
+
+        if (log.isDebugEnabled()) {
+            log.trace("Failed to process authentication request", failed);
+            log.trace("Cleared SecurityContextHolder");
+            log.trace("Handling authentication failure");
+        }
+
+        response.sendError(HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase());
     }
 
     @Override
