@@ -62,6 +62,7 @@ public class SecurityConfig {
 
         httpSecurity
                 .authorizeRequests(authorize -> authorize
+                        .antMatchers("/h2-console/**").permitAll() // do not use in production
                         .antMatchers("/", "/webjars/**", "/login", "/resources/**").permitAll() //this needs to show static resources on /
                         .antMatchers("/beers/find", "/beers*").permitAll()
                         .antMatchers(HttpMethod.GET, "/api/v1/beer/**").permitAll()
@@ -72,6 +73,9 @@ public class SecurityConfig {
                 .and()
                 .formLogin().and()
                 .httpBasic();
+
+        //h2 console config
+        httpSecurity.headers().frameOptions().sameOrigin();
 
         return httpSecurity.build();
     }
