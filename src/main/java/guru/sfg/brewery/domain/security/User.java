@@ -11,6 +11,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 @Entity
+@Table(name = "app_user") //we need to change de name user for the table, because is a reserved word
 public class User {
 
     @Id
