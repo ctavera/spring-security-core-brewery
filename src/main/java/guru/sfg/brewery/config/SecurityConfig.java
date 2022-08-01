@@ -1,37 +1,34 @@
 package guru.sfg.brewery.config;
 
 import guru.sfg.brewery.security.CustomPasswordEncoderFactories;
-import guru.sfg.brewery.security.RestHeaderAuthFilter;
-import guru.sfg.brewery.security.RestUrlParamsAuthFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @EnableWebSecurity
 public class SecurityConfig {
 
+    //This was only for demostration
     // Can use any AuthenticationManager, this use case, we use in memory AuthenticationManager
-    public RestHeaderAuthFilter restHeaderAuthFilter(AuthenticationManager authenticationManager) {
+//    public RestHeaderAuthFilter restHeaderAuthFilter(AuthenticationManager authenticationManager) {
+//
+//        RestHeaderAuthFilter filter = new RestHeaderAuthFilter(new AntPathRequestMatcher("/api/**"));
+//        filter.setAuthenticationManager(authenticationManager);
+//
+//        return filter;
+//    }
 
-        RestHeaderAuthFilter filter = new RestHeaderAuthFilter(new AntPathRequestMatcher("/api/**"));
-        filter.setAuthenticationManager(authenticationManager);
-
-        return filter;
-    }
-
-    public RestUrlParamsAuthFilter restParamsAuthFilter(AuthenticationManager authenticationManager) {
-        RestUrlParamsAuthFilter filter = new RestUrlParamsAuthFilter(new AntPathRequestMatcher("/api/**"));
-        filter.setAuthenticationManager(authenticationManager);
-
-        return filter;
-    }
+//    This was only for demostration
+//    public RestUrlParamsAuthFilter restParamsAuthFilter(AuthenticationManager authenticationManager) {
+//        RestUrlParamsAuthFilter filter = new RestUrlParamsAuthFilter(new AntPathRequestMatcher("/api/**"));
+//        filter.setAuthenticationManager(authenticationManager);
+//
+//        return filter;
+//    }
 
 //    @Bean //If we need to expose the AuthenticationManager
 //    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
@@ -51,11 +48,13 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, AuthenticationConfiguration authenticationConfiguration) throws Exception {
 
-        httpSecurity.addFilterBefore(restHeaderAuthFilter(authenticationConfiguration.getAuthenticationManager()),
-                        UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(restParamsAuthFilter(authenticationConfiguration.getAuthenticationManager()),
-                        UsernamePasswordAuthenticationFilter.class)
-                .csrf().disable();
+//        httpSecurity.addFilterBefore(restHeaderAuthFilter(authenticationConfiguration.getAuthenticationManager()),
+//                        UsernamePasswordAuthenticationFilter.class)
+//                .addFilterBefore(restParamsAuthFilter(authenticationConfiguration.getAuthenticationManager()),
+//                        UsernamePasswordAuthenticationFilter.class)
+//                .csrf().disable();
+
+        httpSecurity.csrf().disable();
 
         httpSecurity
                 .authorizeRequests(authorize -> authorize
