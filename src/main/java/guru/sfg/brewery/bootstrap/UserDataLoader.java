@@ -1,8 +1,8 @@
 package guru.sfg.brewery.bootstrap;
 
-import guru.sfg.brewery.domain.security.Authority;
+import guru.sfg.brewery.domain.security.Role;
 import guru.sfg.brewery.domain.security.User;
-import guru.sfg.brewery.repositories.security.AuthorityRepository;
+import guru.sfg.brewery.repositories.security.RoleRepository;
 import guru.sfg.brewery.repositories.security.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,31 +16,31 @@ import org.springframework.stereotype.Component;
 public class UserDataLoader implements CommandLineRunner {
 
     private final UserRepository userRepository;
-    private final AuthorityRepository authorityRepository;
+    private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
 
     private void loadSecurityData() {
 
-        Authority admin = authorityRepository.save(Authority.builder().role("ROLE_ADMIN").build());
-        Authority userRole = authorityRepository.save(Authority.builder().role("ROLE_USER").build());
-        Authority customer = authorityRepository.save(Authority.builder().role("ROLE_CUSTOMER").build());
+        Role admin = roleRepository.save(Role.builder().name("ROLE_ADMIN").build());
+        Role userRole = roleRepository.save(Role.builder().name("ROLE_USER").build());
+        Role customer = roleRepository.save(Role.builder().name("ROLE_CUSTOMER").build());
 
         userRepository.save(User.builder()
                 .username("spring")
                 .password(passwordEncoder.encode("kahlua"))
-                .authority(admin)
+                .role(admin)
                 .build());
 
         userRepository.save(User.builder()
                 .username("user")
                 .password(passwordEncoder.encode("password"))
-                .authority(userRole)
+                .role(userRole)
                 .build());
 
         userRepository.save(User.builder()
                 .username("scott")
                 .password(passwordEncoder.encode("tiger"))
-                .authority(customer)
+                .role(customer)
                 .build());
 
         log.debug("Users Loaded: " + userRepository.count());
@@ -48,7 +48,7 @@ public class UserDataLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        if (authorityRepository.count() == 0) {
+        if (roleRepository.count() == 0) {
             loadSecurityData();
         }
     }
