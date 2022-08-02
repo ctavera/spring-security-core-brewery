@@ -60,8 +60,11 @@ public class SecurityConfig {
                         .antMatchers("/", "/webjars/**", "/login", "/resources/**").permitAll() //this needs to show static resources on /
                         .antMatchers("/beers/find", "/beers*").permitAll()
                         .antMatchers(HttpMethod.GET, "/api/v1/beer/**").permitAll()
-                        .antMatchers(HttpMethod.DELETE, "/api/v1/beer/**").hasRole("ADMIN")
+                        .mvcMatchers(HttpMethod.DELETE, "/api/v1/beer/**").hasRole("ADMIN")
                         .mvcMatchers(HttpMethod.GET, "/api/v1/beerUpc/{upc}").permitAll() //another implementation
+                        .mvcMatchers("/brewery/breweries").hasRole("CUSTOMER")
+                        .mvcMatchers(HttpMethod.GET, "/brewery/api/v1/breweries").hasRole("CUSTOMER")
+
                 )
                 .authorizeRequests()
                 .anyRequest().authenticated()
