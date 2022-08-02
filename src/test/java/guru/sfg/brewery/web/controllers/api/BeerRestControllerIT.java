@@ -21,23 +21,23 @@ public class BeerRestControllerIT extends BaseIT {
 //                .andExpect(status().isOk());
 //    }
 
-    @Test
-    void deleteBeerBadCredsUrlParams() throws Exception {
-        //Authentication Filter Use Case: legacy aplication who send headers with Api Key and Secret, not recommended
-        mockMvc.perform(delete("/api/v1/beer/cfca9075-1cc5-4532-84ea-739544af7144")
-                        .param("apiKey", "spring")
-                        .param("apiSecret", "kahluaXXXX"))
-                .andExpect(status().isUnauthorized());
-    }
+//    @Test
+//    void deleteBeerBadCredsUrlParams() throws Exception {
+//        //Authentication Filter Use Case: legacy aplication who send headers with Api Key and Secret, not recommended
+//        mockMvc.perform(delete("/api/v1/beer/cfca9075-1cc5-4532-84ea-739544af7144")
+//                        .param("apiKey", "spring")
+//                        .param("apiSecret", "kahluaXXXX"))
+//                .andExpect(status().isUnauthorized());
+//    }
 
-    @Test
-    void deleteBeerBadCreds() throws Exception {
-        //Authentication Filter Use Case: legacy aplication who send headers with Api Key and Secret, not recommended
-        mockMvc.perform(delete("/api/v1/beer/cfca9075-1cc5-4532-84ea-739544af7144")
-                        .header("Api-Key", "spring")
-                        .header("Api-Secret", "kahluaXXXX"))
-                .andExpect(status().isUnauthorized());
-    }
+//    @Test
+//    void deleteBeerBadCreds() throws Exception {
+//        //Authentication Filter Use Case: legacy aplication who send headers with Api Key and Secret, not recommended
+//        mockMvc.perform(delete("/api/v1/beer/cfca9075-1cc5-4532-84ea-739544af7144")
+//                        .header("Api-Key", "spring")
+//                        .header("Api-Secret", "kahluaXXXX"))
+//                .andExpect(status().isUnauthorized());
+//    }
 
 //    @Test
 //    void deleteBeer() throws Exception {
@@ -54,6 +54,22 @@ public class BeerRestControllerIT extends BaseIT {
         mockMvc.perform(delete("/api/v1/beer/cfca9075-1cc5-4532-84ea-739544af7144")
                         .with(httpBasic("spring", "kahlua")))
                 .andExpect(status().is2xxSuccessful());
+    }
+
+    @Test
+    void deleteBeerHttpBasicUserRole() throws Exception {
+        //Authentication Filter Use Case: legacy aplication who send headers with Api Key and Secret, not recommended
+        mockMvc.perform(delete("/api/v1/beer/cfca9075-1cc5-4532-84ea-739544af7144")
+                        .with(httpBasic("user", "password")))
+                .andExpect(status().isForbidden()); //not allowed to the resource
+    }
+
+    @Test
+    void deleteBeerHttpBasicCustomerRole() throws Exception {
+        //Authentication Filter Use Case: legacy aplication who send headers with Api Key and Secret, not recommended
+        mockMvc.perform(delete("/api/v1/beer/cfca9075-1cc5-4532-84ea-739544af7144")
+                        .with(httpBasic("scott", "tiger")))
+                .andExpect(status().isForbidden());
     }
 
     @Test

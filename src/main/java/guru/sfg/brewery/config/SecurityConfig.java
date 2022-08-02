@@ -54,21 +54,21 @@ public class SecurityConfig {
 //                        UsernamePasswordAuthenticationFilter.class)
 //                .csrf().disable();
 
-        httpSecurity.csrf().disable();
-
         httpSecurity
                 .authorizeRequests(authorize -> authorize
                         .antMatchers("/h2-console/**").permitAll() // do not use in production
                         .antMatchers("/", "/webjars/**", "/login", "/resources/**").permitAll() //this needs to show static resources on /
                         .antMatchers("/beers/find", "/beers*").permitAll()
                         .antMatchers(HttpMethod.GET, "/api/v1/beer/**").permitAll()
+                        .antMatchers(HttpMethod.DELETE, "/api/v1/beer/**").hasRole("ADMIN")
                         .mvcMatchers(HttpMethod.GET, "/api/v1/beerUpc/{upc}").permitAll() //another implementation
                 )
                 .authorizeRequests()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin().and()
-                .httpBasic();
+                .httpBasic()
+                .and().csrf().disable();
 
         //h2 console config
         httpSecurity.headers().frameOptions().sameOrigin();
