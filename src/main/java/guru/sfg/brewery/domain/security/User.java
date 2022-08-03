@@ -1,6 +1,10 @@
 package guru.sfg.brewery.domain.security;
 
 import lombok.*;
+import org.springframework.security.core.CredentialsContainer;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -13,7 +17,7 @@ import java.util.stream.Collectors;
 @Builder
 @Entity
 @Table(name = "app_user") //we need to change de name user for the table, because is a reserved word
-public class User {
+public class User implements UserDetails, CredentialsContainer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -29,14 +33,36 @@ public class User {
             inverseJoinColumns = {@JoinColumn(name = "ROLE_ID", referencedColumnName = "ID")})
     private Set<Role> roles;
 
-    @Transient //this property is calculated, not persisted
-    private Set<Authority> authorities;
+//    @Transient //this property is calculated, not persisted
+//    private Set<Authority> authorities;
 
-    public Set<Authority> getAuthorities() {
+    @Transient
+    public Set<GrantedAuthority> getAuthorities() {
         return this.roles.stream()
                 .map(Role::getAuthorities)
                 .flatMap(Set::stream)
+                .map(authority -> new SimpleGrantedAuthority(authority.getPermission()))
                 .collect(Collectors.toSet());
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return this.accountNonExpired;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return this.accountNonLocked;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return this.credentialsNonExpired;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return this.enabled;
     }
 
     @Builder.Default //If this isn't annotated, the defaults values turn null with @Builder
@@ -50,4 +76,9 @@ public class User {
 
     @Builder.Default
     private Boolean enabled = true;
+
+    @Override
+    public void eraseCredentials() {
+        password = null;
+    }
 }
