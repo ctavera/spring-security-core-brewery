@@ -14,9 +14,9 @@ import static org.springframework.security.test.web.servlet.setup.SecurityMockMv
 public abstract class BaseIT {
 
     @Autowired
-    WebApplicationContext webApplicationContext;
+    protected WebApplicationContext webApplicationContext;
 
-    public MockMvc mockMvc;
+    protected MockMvc mockMvc;
 
     @BeforeEach
     void setUp() {
@@ -30,6 +30,7 @@ public abstract class BaseIT {
         return Stream.of(Arguments.of("spring", "kahlua"),
                 Arguments.of("scott", "tiger"));
     }
+
     public static Stream<Arguments> getStreamAllUsers() {
         return Stream.of(Arguments.of("spring", "kahlua"),
                 Arguments.of("scott", "tiger"),
