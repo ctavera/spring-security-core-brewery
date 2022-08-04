@@ -34,7 +34,7 @@ public class BeerOrderController {
             pageNumber = DEFAULT_PAGE_NUMBER;
         }
 
-        if (pageSize == null || pageSize < 0) {
+        if (pageSize == null || pageSize < 1) {
             pageSize = DEFAULT_PAGE_SIZE;
         }
 
