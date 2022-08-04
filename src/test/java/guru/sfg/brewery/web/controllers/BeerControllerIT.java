@@ -9,10 +9,12 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.test.context.support.WithUserDetails;
+import org.springframework.test.annotation.Rollback;
 
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.anonymous;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
@@ -107,6 +109,42 @@ public class BeerControllerIT extends BaseIT {
 
             mockMvc.perform(get("/beers/" + beer.getId()))
                     .andExpect(status().isUnauthorized());
+        }
+    }
+
+    @DisplayName("Add Beers")
+    @Nested
+    class AddBeers {
+
+        @Rollback
+        @WithUserDetails("spring")
+        @Test
+        void processCreationFormADMIN() throws Exception {
+            mockMvc.perform(post("/beers/new")
+                            .param("beerName", "Foo Beer")
+                            .with(csrf()))
+                    .andExpect(status().is3xxRedirection());
+        }
+
+        @Rollback
+        @ParameterizedTest(name = "#{index} with [{arguments}]")
+        @MethodSource("guru.sfg.brewery.web.controllers.BeerControllerIT#getStreamNotAdmin")
+        void processCreationFormNOTAUTH(String user, String pwd) throws Exception {
+            mockMvc.perform(post("/beers/new")
+                            .param("beerName", "Foo Beer")
+                            .with(httpBasic(user, pwd))
+                            .with(csrf()))
+                    .andExpect(status().isForbidden());
+        }
+
+        @Rollback
+        @Test
+        void processCreationFormNOAUTH() throws Exception {
+            mockMvc.perform(post("/beers/new")
+                            .param("beerName", "Foo Beer")
+                            .with(csrf()))
+                    .andExpect(status().isUnauthorized());
+
         }
     }
 }
