@@ -3,7 +3,6 @@ package guru.sfg.brewery.config;
 import guru.sfg.brewery.security.CustomPasswordEncoderFactories;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -11,7 +10,11 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.data.repository.query.SecurityEvaluationContextExtension;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+
+import javax.sql.DataSource;
 
 @RequiredArgsConstructor
 @EnableWebSecurity
@@ -61,7 +64,8 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, AuthenticationConfiguration authenticationConfiguration) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, DataSource dataSource) throws Exception {
+//    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, AuthenticationConfiguration authenticationConfiguration) throws Exception {
 
 //        httpSecurity.addFilterBefore(restHeaderAuthFilter(authenticationConfiguration.getAuthenticationManager()),
 //                        UsernamePasswordAuthenticationFilter.class)
@@ -97,7 +101,8 @@ public class SecurityConfig {
                 )
                 .httpBasic()
                 .and().csrf().ignoringAntMatchers("/h2-console/**", "/api/**")
-                .and().rememberMe().key("brewery-key").userDetailsService(userDetailsService); //Simple Hash-Based Token
+                .and().rememberMe().tokenRepository(persistentTokenRepository(dataSource)); //Persistent Token on DB
+//                .and().rememberMe().key("brewery-key").userDetailsService(userDetailsService); //Simple Hash-Based Token
 
         //h2 console config
         httpSecurity.headers().frameOptions().sameOrigin();
@@ -105,6 +110,12 @@ public class SecurityConfig {
         return httpSecurity.build();
     }
 
+    private PersistentTokenRepository persistentTokenRepository(DataSource dataSource) {
+        JdbcTokenRepositoryImpl tokenRepository = new JdbcTokenRepositoryImpl();
+        tokenRepository.setDataSource(dataSource);
+
+        return tokenRepository;
+    }
 //    @Bean
 //    public InMemoryUserDetailsManager userDetailsService() { //replace the AuthenticationManagerBuilder
 //
