@@ -84,10 +84,11 @@ public class SecurityConfig {
                         .loginPage("/").permitAll()
                         .successForwardUrl("/")
                         .defaultSuccessUrl("/")
+                        .failureUrl("/?error")
                 )
                 .logout(httpSecurityLogoutConfigurer -> httpSecurityLogoutConfigurer
                         .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"))
-                        .logoutSuccessUrl("/").permitAll()
+                        .logoutSuccessUrl("/?logout").permitAll()
                 )
                 .httpBasic()
                 .and().csrf().ignoringAntMatchers("/h2-console/**", "/api/**");
