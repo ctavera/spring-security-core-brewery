@@ -20,12 +20,12 @@ public class AuthenticationSuccessListener {
 
     @EventListener
     public void listen(AuthenticationSuccessEvent event) {
-        LoginSuccess.LoginSuccessBuilder loginSuccessBuilder = LoginSuccess.builder();
 
         log.debug("User Logged In Okay");
 
         if (event.getSource() instanceof UsernamePasswordAuthenticationToken) {
             UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) event.getSource();
+            LoginSuccess.LoginSuccessBuilder loginSuccessBuilder = LoginSuccess.builder();
 
             if (token.getPrincipal() instanceof User) {
                 User user = (User) token.getPrincipal();
