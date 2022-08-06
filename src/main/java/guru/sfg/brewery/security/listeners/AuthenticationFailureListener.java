@@ -1,6 +1,7 @@
 package guru.sfg.brewery.security.listeners;
 
 import guru.sfg.brewery.domain.security.LoginFailure;
+import guru.sfg.brewery.domain.security.User;
 import guru.sfg.brewery.repositories.security.LoginFailureRepository;
 import guru.sfg.brewery.repositories.security.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +11,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.authentication.event.AuthenticationFailureBadCredentialsEvent;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Component;
+
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -47,6 +52,22 @@ public class AuthenticationFailureListener {
             LoginFailure loginFailure = loginFailureRepository.save(loginFailureBuilder.build());
 
             log.debug("Failure Event: " + loginFailure.getId());
+
+            if(loginFailure.getUser() != null) {
+                lockUserAccount(loginFailure.getUser());
+            }
+        }
+    }
+
+    private void lockUserAccount(User user) {
+
+        List<LoginFailure> loginFailures = loginFailureRepository.findAllByUserAndCreatedDateIsAfter(user, Timestamp.valueOf(LocalDateTime.now().minusDays(1)));
+
+        if (loginFailures.size() > 3) {
+            log.debug("Locking User Account...");
+            user.setAccountNonLocked(false);
+
+            userRepository.save(user);
         }
     }
 }
