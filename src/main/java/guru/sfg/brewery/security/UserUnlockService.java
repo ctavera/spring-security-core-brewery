@@ -18,7 +18,7 @@ public class UserUnlockService {
 
     private final UserRepository userRepository;
 
-    @Scheduled(fixedRate = 10000) // every 10 seconds
+    @Scheduled(fixedRate = 300000) // every 5 minutes
     public void unlockAccounts() {
 
         log.debug("Running Unlock Accounts");

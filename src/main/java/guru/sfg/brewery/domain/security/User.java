@@ -84,6 +84,14 @@ public class User implements UserDetails, CredentialsContainer {
     @Builder.Default
     private Boolean enabled = true;
 
+    @Builder.Default
+    private Boolean userGoogle2FA = false;
+
+    private String google2FASecret;
+
+    @Transient // Not to save in the Entity
+    private Boolean google2FARequired = true;
+
     @Override
     public void eraseCredentials() {
         password = null;
