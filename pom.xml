@@ -30,7 +30,7 @@
     </parent>
 
     <groupId>da.springframework</groupId>
-    <artifactId>scc-brewery</artifactId>
+    <artifactId>spring-security-core-brewery</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <description>SFG Brewery Spring MVC Monolith</description>

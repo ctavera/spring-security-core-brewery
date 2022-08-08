@@ -4,6 +4,7 @@ import com.warrenstrange.googleauth.GoogleAuthenticator;
 import com.warrenstrange.googleauth.GoogleAuthenticatorConfig;
 import com.warrenstrange.googleauth.ICredentialRepository;
 import guru.sfg.brewery.security.CustomPasswordEncoderFactories;
+import guru.sfg.brewery.security.google.Google2FAFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
@@ -12,12 +13,12 @@ import org.springframework.security.authentication.DefaultAuthenticationEventPub
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.data.repository.query.SecurityEvaluationContextExtension;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
+import org.springframework.security.web.session.SessionManagementFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import javax.sql.DataSource;
@@ -29,7 +30,8 @@ import java.util.concurrent.TimeUnit;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
-    private final UserDetailsService userDetailsService;
+//    private final UserDetailsService userDetailsService;
+    private final Google2FAFilter google2FAFilter;
 
     //This was only for demostration
     // Can use any AuthenticationManager, this use case, we use in memory AuthenticationManager
@@ -98,6 +100,8 @@ public class SecurityConfig {
 //                .addFilterBefore(restParamsAuthFilter(authenticationConfiguration.getAuthenticationManager()),
 //                        UsernamePasswordAuthenticationFilter.class)
 //                .csrf().disable();
+
+        httpSecurity.addFilterBefore(google2FAFilter, SessionManagementFilter.class);
 
         httpSecurity
                 .authorizeRequests(authorize -> authorize
