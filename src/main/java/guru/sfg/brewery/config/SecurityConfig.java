@@ -1,5 +1,8 @@
 package guru.sfg.brewery.config;
 
+import com.warrenstrange.googleauth.GoogleAuthenticator;
+import com.warrenstrange.googleauth.GoogleAuthenticatorConfig;
+import com.warrenstrange.googleauth.ICredentialRepository;
 import guru.sfg.brewery.security.CustomPasswordEncoderFactories;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -18,6 +21,7 @@ import org.springframework.security.web.authentication.rememberme.PersistentToke
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import javax.sql.DataSource;
+import java.util.concurrent.TimeUnit;
 
 @RequiredArgsConstructor
 @EnableWebSecurity
@@ -49,6 +53,20 @@ public class SecurityConfig {
 //    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
 //        return authenticationConfiguration.getAuthenticationManager();
 //    }
+
+    @Bean
+    public GoogleAuthenticator googleAuthenticator(ICredentialRepository iCredentialRepository){
+
+        GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder configBuilder = new GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder();
+        configBuilder.setTimeStepSizeInMillis(TimeUnit.SECONDS.toMillis(60))
+                .setWindowSize(10)
+                .setNumberOfScratchCodes(0);
+
+        GoogleAuthenticator googleAuthenticator = new GoogleAuthenticator(configBuilder.build());
+        googleAuthenticator.setCredentialRepository(iCredentialRepository);
+
+        return googleAuthenticator;
+    }
 
     @Bean
     public AuthenticationEventPublisher authenticationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
