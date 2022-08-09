@@ -51,7 +51,6 @@ public class BeerRestController {
 
     private final BeerService beerService;
 
-//    @PreAuthorize("hasAuthority('beer.read')") //hasRole seach for prefix ROLE_
     @BeerReadPermission
     @GetMapping(produces = { "application/json" }, path = "beer")
     public ResponseEntity<BeerPagedList> listBeers(@RequestParam(value = "pageNumber", required = false) Integer pageNumber,
@@ -123,7 +122,6 @@ public class BeerRestController {
     }
 
     //@CrossOrigin //individual
-//    @PreAuthorize("hasRole('ADMIN')")
     @BeerDeletePermission
     @DeleteMapping({"beer/{beerId}"})
     @ResponseStatus(HttpStatus.NO_CONTENT)

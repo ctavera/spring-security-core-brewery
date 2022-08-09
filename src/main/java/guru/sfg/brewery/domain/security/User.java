@@ -40,9 +40,6 @@ public class User implements UserDetails, CredentialsContainer {
     @ManyToOne(fetch = FetchType.EAGER)
     private Customer customer;
 
-//    @Transient //this property is calculated, not persisted
-//    private Set<Authority> authorities;
-
     @Transient
     public Set<GrantedAuthority> getAuthorities() {
         return this.roles.stream()
